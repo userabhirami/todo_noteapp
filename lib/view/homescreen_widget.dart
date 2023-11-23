@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 
-class HomeScreenWidget extends StatelessWidget {
-  const HomeScreenWidget(
+// ignore: must_be_immutable
+class HomeScreenWidget extends StatefulWidget {
+  HomeScreenWidget(
       {super.key,
       required this.title,
       required this.description,
-      this.date,
-      required this.ondeletetap});
+      required this.date,
+      required this.ondeletetap,
+      this.onedittap,
+      required this.color});
   final String title;
   final String description;
-  final String? date;
+  final String date;
   final VoidCallback? ondeletetap;
+  final VoidCallback? onedittap;
+  Color color;
 
+  @override
+  State<HomeScreenWidget> createState() => _HomeScreenWidgetState();
+}
+
+class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -25,7 +35,7 @@ class HomeScreenWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -33,11 +43,12 @@ class HomeScreenWidget extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    InkWell(onTap: ondeletetap, child: Icon(Icons.delete)),
+                    InkWell(
+                        onTap: widget.ondeletetap, child: Icon(Icons.delete)),
                     SizedBox(
-                      width: 20,
+                      width: 5,
                     ),
-                    Icon(Icons.edit)
+                    InkWell(onTap: widget.onedittap, child: Icon(Icons.edit))
                   ],
                 )
               ],
@@ -51,7 +62,7 @@ class HomeScreenWidget extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  description,
+                  widget.description,
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -74,7 +85,7 @@ class HomeScreenWidget extends StatelessWidget {
           )
         ],
       ),
-      color: Colors.orange,
+      color: widget.color,
     );
   }
 }
