@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_25/model/notemodel/notemodel.dart';
 import 'package:flutter_application_25/view/homescreen_widget.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -10,6 +11,8 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
+  var box = Hive.box('myBox');
+  var keylist = [];
   final nameController = TextEditingController();
   final desController = TextEditingController();
   final dateController = TextEditingController();
@@ -26,6 +29,13 @@ class _HomescreenState extends State<Homescreen> {
   //int? checkvalue;
   int? selectedIndex;
   List<int> selectedList = [];
+
+  @override
+  void initState() {
+    keylist = box.keys.toList();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +47,7 @@ class _HomescreenState extends State<Homescreen> {
           padding: const EdgeInsets.all(20),
           child: ListView.separated(
             separatorBuilder: (context, index) => SizedBox(height: 20),
-            itemCount: myNoteList.length,
+            itemCount: keylist.length,
             itemBuilder: (context, index) => HomeScreenWidget(
               color: myColors[myNoteList[index].color],
               title: myNoteList[index].title,
@@ -136,12 +146,22 @@ class _HomescreenState extends State<Homescreen> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            myNoteList.add(Notemodel(
+                            /* myNoteList.add(Notemodel(
                               title: nameController.text,
                               date: dateController.text,
                               description: desController.text,
                               color: selectedIndex!,
                             ));
+                           */
+                            box.add({
+                              // "notemodel": myNoteList.add(Notemodel(
+                              "title": nameController.text,
+                              "date": dateController.text,
+                              "description": desController.text,
+                              "color": selectedIndex!,
+                              //   ))
+                            });
+                            keylist = box.keys.toList(); // get keys from db
                             setState(() {});
                             print(nameController.text);
                             print(desController.text);
