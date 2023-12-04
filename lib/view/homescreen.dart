@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_25/model/notemodel/notemodel.dart';
 import 'package:flutter_application_25/view/homescreen_widget.dart';
+
 import 'package:hive_flutter/hive_flutter.dart';
 
 class Homescreen extends StatefulWidget {
@@ -11,28 +12,27 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  var box = Hive.box('myBox');
-  var keylist = [];
+  var box = Hive.box<Notemodel>('myBox');
   final nameController = TextEditingController();
   final desController = TextEditingController();
   final dateController = TextEditingController();
-  List<Notemodel> myNoteList = [
-    //  Notemodel(title: "title", date: "date", description: "des", color: 3)
-  ];
+  final updatenameController = TextEditingController();
+  final updatedesController = TextEditingController();
+  final updatedateController = TextEditingController();
+  List<Notemodel> myNoteList = [];
   List<Color> myColors = [
     Colors.red,
     Colors.blue,
     Colors.green,
     Colors.amber,
   ];
-  String value = "";
-  //int? checkvalue;
+
   int? selectedIndex;
-  List<int> selectedList = [];
+  var keyList = [];
 
   @override
   void initState() {
-    keylist = box.keys.toList();
+    keyList = box.keys.toList();
     super.initState();
   }
 
@@ -47,32 +47,116 @@ class _HomescreenState extends State<Homescreen> {
           padding: const EdgeInsets.all(20),
           child: ListView.separated(
             separatorBuilder: (context, index) => SizedBox(height: 20),
-            itemCount: keylist.length,
+            itemCount: keyList.length,
             itemBuilder: (context, index) => HomeScreenWidget(
-              color: myColors[myNoteList[index].color],
-              title: myNoteList[index].title,
-              description: myNoteList[index].description,
-              date: myNoteList[index].date,
+              color: myColors[box.get(keyList[index])!.color],
+              title: box.get(keyList[index])!.title,
+              description: box.get(keyList[index])!.description,
+              date: box.get(keyList[index])!.date,
               ondeletetap: () {
-                myNoteList.removeAt(index);
+                box.delete(keyList.removeAt(index));
                 setState(() {});
               },
               onedittap: () {
-                value = "Update";
-                bottomSheet(context);
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return StatefulBuilder(
+                        builder: (context, CsetState) => Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                TextField(
+                                  controller: updatenameController,
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: "New Title"),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextField(
+                                  controller: updatedesController,
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: "New Description"),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextField(
+                                  controller: updatedateController,
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: "New Date"),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: List.generate(
+                                    myColors.length,
+                                    (index) => InkWell(
+                                      onTap: () {
+                                        selectedIndex = index;
 
-                nameController.text = myNoteList[index].title;
-                desController.text = myNoteList[index].description;
-                dateController.text = myNoteList[index].date;
-                myNoteList.removeAt(index);
-                setState(() {});
+                                        CsetState(() {});
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                            border: selectedIndex == index
+                                                ? Border.all(
+                                                    color: myColors[index]
+                                                        .withOpacity(.5),
+                                                    width: 5)
+                                                : null,
+                                            color:
+                                                myColors[index].withOpacity(.4),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      box.put(
+                                          keyList[index],
+                                          Notemodel(
+                                              title: updatenameController.text,
+                                              date: updatedateController.text,
+                                              description:
+                                                  updatedesController.text,
+                                              color: selectedIndex!));
+                                      setState(() {});
+                                      keyList =
+                                          box.keys.toList(); // get keys from db
+                                      print("update key list: $keyList");
+
+                                      updatenameController.clear();
+                                      updatedesController.clear();
+                                      updatedateController.clear();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Save"))
+                              ],
+                            ));
+                  },
+                );
               },
             ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
-              value = "submit";
               selectedIndex = null;
               bottomSheet(context);
             },
@@ -84,7 +168,7 @@ class _HomescreenState extends State<Homescreen> {
         context: context,
         builder: (context) {
           return StatefulBuilder(
-              builder: (context, CsetState) => Column(
+              builder: (context, C2setState) => Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TextField(
@@ -120,7 +204,7 @@ class _HomescreenState extends State<Homescreen> {
                             onTap: () {
                               selectedIndex = index;
 
-                              CsetState(() {});
+                              C2setState(() {});
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -146,25 +230,15 @@ class _HomescreenState extends State<Homescreen> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            /* myNoteList.add(Notemodel(
-                              title: nameController.text,
-                              date: dateController.text,
-                              description: desController.text,
-                              color: selectedIndex!,
-                            ));
-                           */
-                            box.add({
-                              // "notemodel": myNoteList.add(Notemodel(
-                              "title": nameController.text,
-                              "date": dateController.text,
-                              "description": desController.text,
-                              "color": selectedIndex!,
-                              //   ))
-                            });
-                            keylist = box.keys.toList(); // get keys from db
+                            box.add(Notemodel(
+                                title: nameController.text,
+                                date: dateController.text,
+                                description: desController.text,
+                                color: selectedIndex!));
                             setState(() {});
-                            print(nameController.text);
-                            print(desController.text);
+                            keyList = box.keys.toList(); // get keys from db
+                            print("key list: $keyList");
+
                             nameController.clear();
                             desController.clear();
                             dateController.clear();

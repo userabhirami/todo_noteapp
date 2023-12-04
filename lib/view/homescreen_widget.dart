@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
-class HomeScreenWidget extends StatefulWidget {
+class HomeScreenWidget extends StatelessWidget {
   HomeScreenWidget(
       {super.key,
       required this.title,
@@ -18,11 +17,6 @@ class HomeScreenWidget extends StatefulWidget {
   Color color;
 
   @override
-  State<HomeScreenWidget> createState() => _HomeScreenWidgetState();
-}
-
-class _HomeScreenWidgetState extends State<HomeScreenWidget> {
-  @override
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -35,7 +29,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.title,
+                  title,
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -43,12 +37,11 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                 ),
                 Row(
                   children: [
-                    InkWell(
-                        onTap: widget.ondeletetap, child: Icon(Icons.delete)),
+                    InkWell(onTap: ondeletetap, child: Icon(Icons.delete)),
                     SizedBox(
                       width: 5,
                     ),
-                    InkWell(onTap: widget.onedittap, child: Icon(Icons.edit))
+                    InkWell(onTap: onedittap, child: Icon(Icons.edit))
                   ],
                 )
               ],
@@ -62,7 +55,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  widget.description,
+                  description,
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 15,
@@ -71,21 +64,24 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               ),
             ],
           ),
-          Column(
+          SizedBox(
+            height: 15,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Positioned(
-                  top: 0,
-                  bottom: 10,
-                  right: 20,
-                  child: Text(
-                    "",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  )),
+              Text(
+                date,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+              ),
             ],
-          )
+          ),
         ],
       ),
-      color: widget.color,
+      color: color,
     );
   }
 }
