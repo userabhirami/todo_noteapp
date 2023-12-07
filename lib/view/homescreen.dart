@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_25/model/notemodel/notemodel.dart';
 import 'package:flutter_application_25/view/homescreen_widget.dart';
-
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -39,9 +39,15 @@ class _HomescreenState extends State<Homescreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("ToDo"),
-          backgroundColor: const Color.fromARGB(255, 65, 224, 71),
+          elevation: 0,
+          title: Text(
+            "Notes",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.black, fontSize: 25),
+          ),
+          backgroundColor: Colors.white,
         ),
         body: Padding(
           padding: const EdgeInsets.all(20),
@@ -86,8 +92,39 @@ class _HomescreenState extends State<Homescreen> {
                                 TextField(
                                   controller: updatedateController,
                                   decoration: InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      hintText: "New Date"),
+                                      icon: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 0),
+                                        child: Icon(Icons.calendar_today),
+                                      ), //icon of text field
+                                      labelText: "New Date"),
+                                  readOnly:
+                                      true, //set it true, so that user will not able to edit text
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.now(),
+                                        firstDate: DateTime(
+                                            2000), //DateTime.now() - not to allow to choose before today.
+                                        lastDate: DateTime(2101));
+
+                                    if (pickedDate != null) {
+                                      print(
+                                          "pickedDate: $pickedDate"); //pickedDate output format => 2021-03-10 00:00:00.000
+                                      String formattedDate =
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(pickedDate);
+                                      print("formattedDate: $formattedDate");
+                                      setState(() {
+                                        updatedateController.text =
+                                            formattedDate; //set output date to TextField value.
+                                      });
+                                    } else {
+                                      SnackBar(
+                                        content: Text("Select Date"),
+                                      );
+                                    }
+                                  },
                                 ),
                                 SizedBox(
                                   height: 10,
@@ -156,6 +193,7 @@ class _HomescreenState extends State<Homescreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.black,
             onPressed: () {
               selectedIndex = null;
               bottomSheet(context);
@@ -191,7 +229,33 @@ class _HomescreenState extends State<Homescreen> {
                       TextField(
                         controller: dateController,
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(), hintText: "Date"),
+                            icon: Padding(
+                              padding: const EdgeInsets.only(right: 0),
+                              child: Icon(Icons.calendar_today),
+                            ),
+                            labelText: "Date"),
+                        readOnly: true,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2101));
+
+                          if (pickedDate != null) {
+                            print("pickedDate: $pickedDate");
+                            String formattedDate =
+                                DateFormat('yyyy-MM-dd').format(pickedDate);
+                            print("formattedDate: $formattedDate");
+                            setState(() {
+                              dateController.text = formattedDate;
+                            });
+                          } else {
+                            SnackBar(
+                              content: Text("Select Date"),
+                            );
+                          }
+                        },
                       ),
                       SizedBox(
                         height: 10,
