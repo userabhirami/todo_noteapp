@@ -40,15 +40,15 @@ class _HomescreenState extends State<Homescreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 245, 191, 141),
         appBar: AppBar(
           elevation: 0,
           title: Text(
             "Notes",
             style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black, fontSize: 25),
+                fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(210, 121, 79, 45),
         ),
         body: Padding(
           padding: const EdgeInsets.all(20),
@@ -198,7 +198,7 @@ class _HomescreenState extends State<Homescreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-            backgroundColor: Colors.black,
+            backgroundColor: Color.fromARGB(210, 121, 79, 45),
             onPressed: () {
               selectedIndex = null;
               bottomSheet(context);
