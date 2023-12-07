@@ -3,6 +3,7 @@ import 'package:flutter_application_25/model/notemodel/notemodel.dart';
 import 'package:flutter_application_25/view/homescreen_widget.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -61,6 +62,10 @@ class _HomescreenState extends State<Homescreen> {
               date: box.get(keyList[index])!.date,
               ondeletetap: () {
                 box.delete(keyList.removeAt(index));
+                setState(() {});
+              },
+              onsharetap: () {
+                Share.share(box.get(keyList[index])!.title);
                 setState(() {});
               },
               onedittap: () {

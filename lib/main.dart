@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_25/model/notemodel/notemodel.dart';
 import 'package:flutter_application_25/view/homescreen.dart';
+import 'package:flutter_application_25/view/splashScreen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> main() async {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Homescreen(),
+      home: SplashScreen(),
     );
   }
 }
